@@ -1,0 +1,156 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+/*Кэш-список
+Реализовать шаблонный контейнер двунаправленного
+самосортирующегося списка.
+Контейнер хранить шаблонные данные data, id (int) и
+количество обращений к данным accessСount (int), иметь операцию
+вывода(или перегрузку оператора <<) в формате “id accessСount data”
+и метод-геттер по id. После каждого обращения на чтение список
+сортируется чтобы самые часто запрашиваемые данные были
+в начале списка.
+*/
+
+template<class I>   //Шаблонный класс для data
+struct Item{
+    int id, accessCount;
+    I data;
+    Item* next,* prev;
+};
+
+template<class L>   //Шаблонный класс для контейнера
+class List{
+private:
+    Item<L>* begin;
+    Item<L>* end;
+    int counter;
+    int idCounter;
+public:
+    List(){
+        begin = end = nullptr;
+        counter = 0;
+        idCounter = 0;
+    }
+
+    //Добавление элементов в контейнер
+    List(List& Line){
+        begin = end = nullptr;
+        counter = 0;
+        idCounter = 0;
+
+        Item<L>* buff = Line.begin;
+        while(buff != 0){
+            push_back(buff -> data);
+            buff = buff -> next;
+        }
+    }
+
+    void append(L _data){
+        Item<L>* buff = new Item<L>;
+
+        buff -> next = nullptr;
+        buff -> prev = nullptr;
+        buff -> data = _data;
+        buff -> id = idCounter;
+        buff -> accessCount = 0;
+
+        if(end != nullptr){
+            end -> next = buff;
+        }
+
+        if(counter == 0){
+            begin = end = buff;
+        }
+        else{
+            buff -> prev = end;
+            end = buff;
+        }
+        counter++;
+        idCounter++;
+    }
+
+    //Геттер по ID
+    void getByID(int _id){
+        Item<L>* buff = begin;
+        while(buff -> id != _id){
+            buff = buff -> next;
+        }
+
+        buff -> accessCount++;
+        cout << buff -> id << " -- " << buff -> data << " is accessed for the " << buff -> accessCount << " time." << endl;
+    }
+
+    //Вывод всего содержимого контейнера. Перегрузить оператор << не получилось(
+    void printList(){
+        Item<L>* buff = begin;
+        cout << buff -> id << " -- " << buff -> data << " is accessed " << buff -> accessCount << " times." << endl;
+        while(buff -> next != nullptr){
+            buff = buff -> next;
+            cout << buff -> id << " -- " << buff -> data << " is accessed " << buff -> accessCount << " times." << endl;
+        }
+    }
+
+    //Сортировка контейнера
+    void sortList(){
+        for(Item<L>* i = begin; i; i = i -> next){
+            for(Item<L>* j = begin; j; j = j -> next){
+                if(i -> accessCount > j -> accessCount){
+                    Item<L>* buff = nullptr;
+
+                    //Временные переменные для перестановки
+                    int index = i -> id;
+                    L dataTemp = i -> data;
+                    int ac = i -> accessCount;
+
+                    //Перестановка элементов контейнера
+                    i -> id = j -> id;
+                    i -> accessCount = j -> accessCount;
+                    i -> data = j -> data;
+
+                    j -> id = index;
+                    j -> accessCount = ac;
+                    j -> data = dataTemp;
+                }
+            }
+        }
+    };
+};
+
+
+int main(){
+    //Объявление и заполнение контейнера
+    List<int> example;
+    srand(time(0));
+    example.append(rand()%100);
+    example.append(rand()%100);
+    example.append(rand()%100);
+    example.append(rand()%100);
+    example.append(rand()%100);
+    example.append(rand()%100);
+    example.append(rand()%100);
+    example.append(rand()%100);
+    example.append(rand()%100);
+    example.append(rand()%100);
+
+    //Тестирование методов
+    example.printList();
+    cout << '\n';
+    example.getByID(rand()%9);
+    example.getByID(rand()%9);
+    example.getByID(rand()%9);
+    example.getByID(rand()%9);
+    example.getByID(rand()%9);
+    example.getByID(rand()%9);
+    example.getByID(rand()%9);
+    example.getByID(rand()%9);
+    example.getByID(rand()%9);
+    example.getByID(rand()%9);
+
+    cout << '\n';
+    example.sortList();
+    example.printList();
+    return 0;
+}
