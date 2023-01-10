@@ -1,0 +1,42 @@
+#include <iostream>
+#include <string>
+#include <map>
+
+using namespace std;
+
+/*map
+Написать программу для работы с контейнером map.
+Программа получает на вход строку которая состоит из строк,
+разделенных пробелом. Необходимо подсчитать количество раз
+которое встречается каждое из строк в входной строке.
+*/
+
+int main(){
+
+    //Объявление переменных и контейнера map
+    map <string, int> entitiesMap;
+    int k;
+    string inputStr;
+    string pholdStr;
+
+    //Ввод строки
+    getline(cin, inputStr);
+    inputStr += ' '; //Добавление пробела в конец строки, чтобы не было пропуска последнего слова
+
+    for(k = 0; k < inputStr.length(); k++){
+        if(inputStr[k] != ' '){   //Заполнение строки-плейсхолдера любыми символами, кроме пробела
+            pholdStr.push_back(inputStr[k]);
+        }
+        if(inputStr[k] == ' '){   //Извлечение слова из исходной строки, добавление ключа и значения в map, дубликаты сортируются самим контейнером
+            entitiesMap[pholdStr]++;
+            pholdStr.clear();
+        }
+    }
+
+    //Вывод ключей и значений элементов map
+    cout << '\n';
+    for(auto k: entitiesMap) {
+        cout << k.first << " appears " << k.second << " times." << endl;
+    }
+    return 0;
+}
