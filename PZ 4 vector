@@ -1,0 +1,88 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <time.h>
+#include <algorithm>
+
+using namespace std;
+
+/*vector
+Написать программу для работы с контейнером vector.
+Программа получает на вход количество элементов для двух векторов,
+разделенные пробелом. Вектора заполняются случайными элементами
+от -100 до 100 в соответствии с заданным размером.
+Необходимо вывести содержимое векторов, найти среднее арифметическое
+элементов каждого из  векторов и пересекающиеся элементы.
+*/
+
+vector<int> vectorIntersection(vector<int> v1, vector<int> v2){ //Нахождение пересечения
+    //Пересечение векторов
+    vector<int> v3;
+
+    //Сортировка векторов в порядке возрастания и удаление дубликатов
+    sort(v1.begin(), v1.end());
+    v1.erase(unique(v1.begin(), v1.end()), v1.end());
+    sort(v2.begin(), v2.end());
+    v2.erase(unique(v2.begin(), v2.end()), v2.end());
+
+    //Нахождение пересечения
+    set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(), back_inserter(v3));
+    return v3;
+}
+
+int main(){
+    //Задача количества элементов векторов
+    int vSizeFirst, vSizeSec;
+    cout << "Input the size of the first vector:";
+    cin >> vSizeFirst;
+    cout << "Input the size of the second vector:";
+    cin >> vSizeSec;
+
+    //Объявление и установка размеров векторов
+    vector<int> v1, v2;
+    v1.reserve(vSizeFirst);
+    v2.reserve(vSizeSec);
+
+    //Заполнение векторов случайными числами на интервале [-100;100]
+    //Вывод сгенерированных элементов для каждого вектора
+    srand(time(0));
+    int k;
+
+    cout << "First vector's elements: ";
+    for(k = 0; k < vSizeFirst; k++){
+        v1.insert(v1.end(), (rand() % 200) - 100);
+        cout << v1[k] << "; ";
+    }
+    cout << "\nSecond vector's elements: ";
+    for(k = 0; k < vSizeSec; k++){
+        v2.insert(v2.end(), (rand() % 200) - 100);
+        cout << v2[k] << "; ";
+    }
+
+    //Нахождение среднего арифметического элементов для каждого вектора
+    //Среднее арифметическое округляется до целого
+    int sum = 0;
+    for(k = 0; k < vSizeFirst; k++){
+        sum += v1[k];
+    }
+    cout << "\nArithmetic mean for the elements of the first vector equals: " << sum / vSizeFirst << endl;
+    sum = 0;
+    for(k = 0; k < vSizeSec; k++){
+        sum += v2[k];
+    }
+    cout << "Arithmetic mean for the elements of the second vector equals: " << sum / vSizeSec << endl;
+
+    //Поиск и вывод пересечения
+    auto v3 = vectorIntersection(v1, v2);
+
+    cout << "The intersection of the two vectors: ";
+    if(!v3.empty()){
+        for(auto &k: v3)
+            cout << k << "; ";
+    }
+    else{
+        cout << "None...";
+    }
+
+    return 0;
+}
