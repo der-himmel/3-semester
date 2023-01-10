@@ -1,0 +1,278 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <fstream>
+#include <iomanip>
+
+using namespace std;
+
+/*Многокритериальный поиск
+Написать программу поиска по критериям.
+Объекты представляют собой набор параметров (не менее 4-х).
+Программа хранит набор объектов в текстовом файле
+в произвольном формате и загружает их в начале работы.
+Программа обеспечивает функционал поиска по одному
+из критериев и формирует список объектов, подходящих
+под критерий поиска. После этого пользователь может
+сбросить результаты поиска или провести ещё один поиск
+по выбранным объектам.
+Реализовать консольный интерфейс для программы.
+ */
+
+struct Person{  //Структура с параметрами человека
+    int id;
+    string name;
+    int age;
+    string city;
+
+    Person(int id, string name, int age,string city)
+        : id(id), name(name), age(age), city(city) {}
+};
+
+vector<Person> databaseV;
+vector<Person> dbOut;
+
+//Заполнение базы данных
+void setDB(vector<Person>& databaseV){
+    Person n0(0, "Victor", 35, "Pskov");
+    Person n1(1, "Anna", 23, "Krasnodar");
+    Person n2(2, "Ivan", 19, "Moscow");
+    Person n3(3, "Elena", 31, "Pskov");
+    Person n4(4, "Anna", 47, "Belgorod");
+    databaseV.push_back(n0);
+    databaseV.push_back(n1);
+    databaseV.push_back(n2);
+    databaseV.push_back(n3);
+    databaseV.push_back(n4);
+
+    /* Для чтения базы из файла
+    string line;
+    ifstream base("base.txt");
+    if (base.is_open()){
+        int counter = 0;
+        while(getline(base, line)){
+            Person temp(0, "", 0, "");
+            string buffer;
+            int par = 0;
+            for(int k = 0; k <= line.length(); k++){
+                if(!isalpha(line[k]) or !isdigit(line[k])){
+                    par += 1;
+                    switch(par){
+                        case 1:
+                            temp.id = stoi(buffer);
+                            buffer.clear();
+                            break;
+                        case 2:
+                            temp.name = buffer;
+                            buffer.clear();
+                            break;
+                        case 3:
+                            temp.age = stoi(buffer);
+                            buffer.clear();
+                            break;
+                        case 4:
+                            temp.city = buffer;
+                            buffer.clear();
+                            break;
+                    }
+                }
+                else{
+                    for(auto k: databaseV)
+                        cout << k.id << " -- " << k.name << ", " << k.age << ", " << k.city << " profile has been added."<< endl;
+                    buffer.push_back(line[k]);
+                }
+            }
+            databaseV.push_back(temp);
+            counter += 1;
+        }
+    }
+    base.close();*/
+}
+
+void printDB(vector<Person>& databaseV){
+    for(auto k: databaseV)
+        cout << k.id << " -- " << k.name << ", " << k.age << ", " << k.city << endl;
+    cout << '\n';
+}
+
+//Вывод главного меню в консоль
+void pMainMenu(){
+    cout << "1. Print profiles database." << endl;
+    cout << "2. Search by specific criterion." << endl;
+    cout << "3. Exit." << endl;
+}
+
+//Меню поиска
+void pSearchMenu(){
+    cout << "1. Print profiles database (according to criterions)." << endl;
+    cout << "2. Search by ID." << endl;
+    cout << "3. Search by name." << endl;
+    cout << "4. Sort by age (set minimum age)." << endl;
+    cout << "5. Search by city." << endl;
+    cout << "6. Clear search criterions." << endl;
+    cout << "6. Exit search." << endl;
+}
+
+//Поиск по ID
+void searchID(int id){
+    if(dbOut.empty()) {
+        for (int k = 0; k < databaseV.size(); k++) {
+            if (databaseV[k].id == id) {
+                dbOut.push_back(databaseV[k]);
+            }
+        }
+        cout << "Search results: " << endl;
+        printDB(dbOut);
+    }
+    else{
+        vector<int> temp;
+        for(int k = 0; k <= dbOut.size(); k++){
+            if(dbOut[k].id != id){
+                temp.push_back(k);
+            }
+        }
+        for(int k = (temp.size() - 1); k > -1; k--){
+            dbOut.erase(dbOut.begin() + temp[k]);
+        }
+    }
+    cout << "Search results: " << endl;
+    printDB(dbOut);
+};
+
+//Поиск по имени
+void searchName(string name){
+    if(dbOut.empty()) {
+        for (int k = 0; k < databaseV.size(); k++) {
+            if (databaseV[k].name == name) {
+                dbOut.push_back(databaseV[k]);
+            }
+        }
+        cout << "Search results: " << endl;
+        printDB(dbOut);
+    }
+    else{
+        vector<int> temp;
+        for(int k = 0; k <= dbOut.size(); k++){
+            if(dbOut[k].name != name){
+                temp.push_back(k);
+            }
+        }
+        for(int k = (temp.size() - 1); k > -1; k--){
+            dbOut.erase(dbOut.begin() + temp[k]);
+        }
+    }
+    cout << "Search results: " << endl;
+    printDB(dbOut);
+};
+
+//Поиск по городу
+void searchCity(string city){
+    if(dbOut.empty()) {
+        for (int k = 0; k < databaseV.size(); k++) {
+            if (databaseV[k].city == city) {
+                dbOut.push_back(databaseV[k]);
+            }
+        }
+        cout << "Search results: " << endl;
+        printDB(dbOut);
+    }
+    else{
+        vector<int> temp;
+        for(int k = 0; k <= dbOut.size(); k++){
+            if(dbOut[k].city != city){
+                temp.push_back(k);
+            }
+        }
+        for(int k = (temp.size() - 1); k > -1; k--){
+            dbOut.erase(dbOut.begin() + temp[k]);
+        }
+    }
+    cout << "Search results: " << endl;
+    printDB(dbOut);
+};
+
+//Сортировка по возрасту
+void sortAge(int min){
+    if(dbOut.empty()){
+        for (int k = 0; k < databaseV.size(); k++){
+            if (databaseV[k].age >= min){
+                dbOut.push_back(databaseV[k]);
+            }
+        }
+        cout << "Search results: " << endl;
+        printDB(dbOut);
+    }
+    else{
+        vector<int> temp;
+        for(int k = 0; k <= dbOut.size(); k++){
+            if(dbOut[k].age < min){
+                temp.push_back(k);
+            }
+        }
+        for(int k = (temp.size() - 1); k > -1; k--){
+            dbOut.erase(dbOut.begin() + temp[k]);
+        }
+    }
+    cout << "Search results: " << endl;
+    printDB(dbOut);
+};
+
+
+int main(){
+    setDB(databaseV);
+    int m = 0;
+    do{
+        pMainMenu();
+        cin >> m;
+        switch(m){
+            case 1:
+                printDB(databaseV);
+                break;
+            case 2:
+                int s;
+                do{
+                    pSearchMenu();
+                    cin >> s;
+                    int intCrit;
+                    string strCrit;
+                    switch(s){
+                        case 1:
+                            if(!dbOut.empty()){
+                                printDB(dbOut);
+                            }
+                            else{
+                                printDB(databaseV);
+                            }
+                            break;
+                        case 2:
+                            cout << "Enter ID:";
+                            cin >> intCrit;
+                            searchID(intCrit);
+                            break;
+                        case 3:
+                            cout << "Enter name:";
+                            cin >> strCrit;
+                            searchName(strCrit);
+                            break;
+                        case 4:
+                            cout << "Enter minimum age:";
+                            cin >> intCrit;
+                            sortAge(intCrit);
+                            break;
+                        case 5:
+                            cout << "Enter city:";
+                            cin >> strCrit;
+                            searchCity(strCrit);
+                            break;
+                        case 6:
+                            cout << "Criterions were successfully cleared." << endl;
+                            dbOut.clear();
+                            break;
+                    }
+                } while (s != 6);
+                dbOut.clear();
+                break;
+        }
+    } while (m != 3);
+    return 0;
+}
